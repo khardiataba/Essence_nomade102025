@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Essence Nomade — Boutique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0f0f10;
+  --card:#0f1720;
+  --muted:#aab3bf;
+  --accent:#d4a72c;
+  --accent-2:#e6b03b;
+  --glass: rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: "Montserrat",system-ui,Segoe UI,Arial;
+  background:linear-gradient(180deg,#070707 0%, #0c0c0d 60%);
+  color:#fff;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Header */
+header{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; gap:20px;
+  justify-content:space-between;
+  padding:16px 28px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.2));
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.brand {display:flex; align-items:center; gap:14px;}
+.logo{
+  width:56px; height:56px; border-radius:8px; overflow:hidden;
+  background:var(--glass); display:flex; align-items:center; justify-content:center;
+}
+.logo img{width:100%; height:100%; object-fit:cover}
+h1{font-family:"Playfair Display",serif; font-size:20px; margin:0; letter-spacing:0.6px}
+
+/* Header controls */
+.controls{display:flex; align-items:center; gap:12px}
+.search{
+  display:flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,0.04);
+  padding:8px 12px; border-radius:10px; min-width:280px;
+}
+.search input{
+  background:transparent; border:0; outline:none; color:#fff; width:100%;
+  font-size:14px;
+}
+.icon-btn{
+  background:transparent; border:0; color:#fff; cursor:pointer; font-size:16px;
+  padding:8px; border-radius:8px;
+}
+.cart-bubble{
+  min-width:36px; padding:6px 10px; border-radius:18px; background:var(--accent);
+  color:#111; font-weight:700; display:inline-flex; align-items:center; gap:8px;
+}
+
+/* Main layout */
+main{display:grid; grid-template-columns: 260px 1fr; gap:32px; padding:28px; align-items:start}
+@media (max-width:980px){ main{grid-template-columns: 1fr; padding:18px} .sidebar{order:2} }
+
+/* Sidebar filters */
+.sidebar{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+  border-radius:12px; padding:18px; height:fit-content;
+}
+.sidebar h3{margin:0 0 12px 0; font-size:16px}
+.cats button{
+  display:block; width:100%; text-align:left; padding:10px; margin-bottom:8px; border-radius:8px;
+  border:1px solid rgba(255,255,255,0.03); background:transparent; color:var(--muted); cursor:pointer;
+  font-weight:600;
+}
+.cats button.active{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#111; box-shadow:0 6px 18px rgba(210,150,60,0.12);}
+
+/* Products area */
+.topbar{
+  display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px;
+}
+.topbar .sort{ color:var(--muted); font-size:14px }
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:22px;
+}
+@media (max-width:1100px){ .grid{grid-template-columns: repeat(2,1fr)} }
+@media (max-width:640px){ .grid{grid-template-columns: 1fr} }
+
+/* Card */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:14px; overflow:hidden; position:relative; transition: transform 240ms cubic-bezier(.2,.9,.2,1), box-shadow 240ms;
+  border:1px solid rgba(255,255,255,0.03);
+}
+.card:hover{ transform: translateY(-8px); box-shadow: 0 18px 50px rgba(0,0,0,0.6) }
+.card .media{ position:relative; height:260px; background:#111; display:flex; align-items:center; justify-content:center; overflow:hidden }
+.card .media img{ width:100%; height:100%; object-fit:cover; transition: transform 400ms; }
+.card:hover .media img{ transform: scale(1.06); }
+.badge{
+  position:absolute; left:12px; top:12px; padding:8px 10px; border-radius:10px; font-size:13px;
+  background:rgba(0,0,0,0.45); color:var(--accent); font-weight:700; backdrop-filter: blur(4px);
+}
+.card .body{ padding:14px 16px; display:flex; flex-direction:column; gap:10px; min-height:150px }
+.card h3{ margin:0; font-size:18px; font-weight:700; color:#fff; font-family:"Playfair Display",serif }
+.desc{ color:var(--muted); font-size:13px; line-height:1.3; flex:1 }
+.card .row{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px }
+.price{ font-weight:800; color:var(--accent); font-size:16px }
+.add-btn{
+  background:linear-gradient(90deg,var(--accent),var(--accent-2));
+  color:#111; font-weight:800; border:0; padding:10px 14px; border-radius:10px; cursor:pointer;
+  transition: transform 120ms;
+}
+.add-btn:active{ transform: translateY(1px) }
+
+/* Floating cart preview */
+.cart-preview{
+  position:fixed; right:18px; bottom:18px; z-index:60;
+  background:linear-gradient(180deg,#111,#0b0b0b); padding:12px; border-radius:12px; width:320px;
+  box-shadow:0 16px 40px rgba(0,0,0,0.6); display:none;
+}
+.cart-preview h3{ margin:0 0 8px 0; color:var(--accent) }
+.cart-preview ul{ list-style:none; padding:0; margin:0; max-height:260px; overflow:auto }
+.cart-preview li{ display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed rgba(255,255,255,0.02); color:var(--muted); align-items:center }
+.cart-preview img{ width:48px; height:48px; object-fit:cover; border-radius:8px; }
+
+/* Modal add product (simple) */
+.modal{ display:none; position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.6)}
+.modal .content{ background:#0b0b0b; padding:18px; border-radius:12px; width:480px; max-width:94%; color:#fff }
+.modal label{ display:block; margin-top:10px; color:var(--muted); font-size:13px }
+.modal input[type="text"], .modal textarea, .modal input[type="number"], .modal select{ width:100%; padding:10px; margin-top:6px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:#081018; color:#fff }
+.modal .actions{ margin-top:20px; display:flex; justify-content:flex-end; gap:12px }
+.btn-ghost{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:8px 12px; border-radius:8px; cursor:pointer }
+
+footer{ padding:28px; text-align:center; color:var(--muted); border-top:1px solid rgba(255,255,255,0.02); margin-top:40px }
+</style>
+</head>
+
+<body>
+
+<!-- Header -->
+<header>
+  <div class="brand">
+    <div class="logo"><img src="LOGO_en.jpg" alt="Logo" onerror="this.style.display='none'"></div>
+    <div>
+      <h1>Essence Nomade</h1>
+      <div style="font-size:12px;color:var(--muted)">Essence_nomade </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search" role="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" style="opacity:.9"><path fill="white" d="M9.5 3A6.5 6.5 0 1 0 16 9.5 6.51 6.51 0 0 0 9.5 3Zm0 11A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14Z"/><path fill="white" d="M21 21l-4.35-4.35"/></svg>
+      <input id="searchInput" placeholder="Rechercher un parfum, ex: Zikra…" />
+    </div>
+
+    <button class="icon-btn" id="btnToggleCart" title="Afficher le panier">
+      <span class="cart-bubble" id="cartCount">0 🛒</span>
+    </button>
+
+    <!-- bouton Ajouter masqué par défaut -->
+    <button class="icon-btn" id="btnOpenModal" title="Ajouter un produit" style="display:none">Ajouter</button>
+  </div>
+</header>
+
+<!-- Main -->
+<main>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h3>Catégories</h3>
+    <div class="cats">
+      <button data-cat="all" class="active">Toutes</button>
+      <button data-cat="hommes">Hommes</button>
+      <button data-cat="femmes">Femmes</button>
+      <button data-cat="mixtes">Mixtes</button>
+    </div>
+
+    <h3 style="margin-top:18px">Trier</h3>
+    <div style="display:flex; gap:8px; margin-top:8px">
+      <select id="sortSelect" style="width:100%; padding:10px; border-radius:8px; background:#081018; color:#fff; border:1px solid rgba(255,255,255,0.03)">
+        <option value="default">Par défaut</option>
+        <option value="price-asc">Prix croissant</option>
+        <option value="price-desc">Prix décroissant</option>
+        <option value="name-asc">Nom A→Z</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- Products -->
+  <section>
+    <div class="topbar">
+      <div style="font-size:18px">Nos parfums <span style="color:var(--muted); font-size:13px; margin-left:8px"> — sélection premium</span></div>
+      <div class="sort topbar-right" id="resultsInfo" style="color:var(--muted)"></div>
+    </div>
+
+    <div class="grid" id="productsGrid"></div>
+  </section>
+</main>
+
+<!-- Cart preview (floating) -->
+<div class="cart-preview" id="cartPreview" aria-live="polite" aria-label="Aperçu du panier">
+  <h3>Votre panier</h3>
+  <ul id="cartItems"></ul>
+
+  <div style="margin-top:10px; font-weight:700; text-align:right;">
+    Total: <span id="cartTotal" style="color:var(--accent)">0 FCFA</span>
+  </div>
+
+  <div style="margin-top:12px; display:flex; justify-content:flex-between; gap:8px; align-items:center;">
+    <div style="display:flex; gap:8px;">
+      <button class="btn-ghost" id="clearCartBtn" title="Vider le panier">Vider le panier</button>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn-ghost" id="closeCartPreview">Fermer</button>
+      <button class="add-btn" id="payBtn">Payer (OM / Wave)</button>
+    </div>
+  </div>
+
+  <div style="margin-top:8px; font-size:12px; color:var(--muted); text-align:right;">
+    Merci de régler via Orange Money ou Wave sur le numéro <strong>77 732 94 16</strong>.
+  </div>
+</div>
+
+<!-- Modal Add Product -->
+<div class="modal" id="modal">
+  <div class="content" role="dialog" aria-modal="true">
+    <h3>Ajouter un produit</h3>
+    <form id="addProductForm">
+      <label for="pname">Nom</label>
+      <input id="pname" required type="text" placeholder="Ex: Parfum Zikra">
+
+      <label for="pcat">Catégorie</label>
+      <select id="pcat" required>
+        <option value="">-- Choisir --</option>
+        <option value="hommes">Hommes</option>
+        <option value="femmes">Femmes</option>
+        <option value="mixtes">Mixtes</option>
+      </select>
+
+      <label for="pdesc">Description</label>
+      <textarea id="pdesc" rows="3" placeholder="Brève description"></textarea>
+
+      <label for="pprice">Prix (FCFA)</label>
+      <input id="pprice" type="number" min="0" required>
+
+      <label for="pfile">Image</label>
+      <input id="pfile" type="file" accept="image/*">
+
+      <div class="actions" style="margin-top:20px; display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn-ghost" id="modalClose">Annuler</button>
+        <button type="submit" class="add-btn">Ajouter le produit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer>
+  <div>Contact : <a href="mailto:stickscorpion@yahoo.fr" style="color:var(--accent);">stickscorpion@yahoo.fr</a> | Tel : 77 732 94 16</div>
+  <div style="margin-top:8px; color:var(--muted)">© Essence Nomade - Tous droits réservés</div>
+</footer>
+<script>
+// === ACCÈS PROPRIÉTAIRE — SÉQUENCE SECRÈTE "altespacea" ===
+
+// Code secret chiffré : "1234"
+const encryptedCode = "MTIzNA=="; // base64 de 1234
+function decryptCode(encoded) {
+  try { return atob(encoded); } catch { return null; }
+}
+
+// Sélection des éléments (assure-toi que ces IDs existent dans ton HTML)
+const btnOpenModal = document.getElementById("btnOpenModal");
+const modal = document.getElementById("modal");
+const modalClose = document.getElementById("modalClose");
+const form = document.getElementById("addProductForm");
+
+// Masquer les contrôles admin par défaut
+if (btnOpenModal) btnOpenModal.style.display = "none";
+if (modal) modal.style.display = "none";
+
+// === LOGIQUE D'ACTIVATION PAR SÉQUENCE ===
+window.addEventListener("DOMContentLoaded", () => {
+  let typed = "";
+  const secretSequence = "altespacea"; // tape ceci en dur sur la page pour déclencher
+  const expectedAdminCode = decryptCode(encryptedCode); // "1234"
+
+  document.addEventListener("keydown", (e) => {
+    // Ignorer touches avec modificateurs (Ctrl, Alt, Meta) pour éviter faux positifs
+    if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+      typed += e.key.toLowerCase();
+      if (typed.length > secretSequence.length) typed = typed.slice(-secretSequence.length);
+      if (typed === secretSequence) {
+        // Demander le code admin (prompt simple)
+        const code = prompt("🔐 Accès propriétaire — Entrez le code secret :");
+        if (code === expectedAdminCode) {
+          if (btnOpenModal) btnOpenModal.style.display = "inline-block";
+          alert("✅ Accès propriétaire activé !");
+        } else {
+          alert("❌ Code incorrect. Accès refusé.");
+        }
+        typed = ""; // reset buffer
+      }
+    } else {
+      // Si touche non lettre (Enter, Backspace...), on ne modifie pas le buffer
+    }
+  });
+
+  // Ouvrir / fermer modal si boutons existent
+  if (btnOpenModal && modal) {
+    btnOpenModal.addEventListener("click", () => (modal.style.display = "flex"));
+    modalClose && modalClose.addEventListener("click", () => (modal.style.display = "none"));
+    window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+  }
+});
+
+// === PRODUITS INITIAUX ===
+const initialProducts = [
+  { id: 'zikra', name: "Parfum Zikra", cat: "hommes", price: 15000, img: "zikra.jpg", desc: "Cognac doux, praliné gourmand et épices chaudes." },
+  { id: 'lattafa', name: "Parfum Lattafa", cat: "hommes", price: 15000, img:"lattafa.jpg", desc: "Oud & notes boisées, caractère affirmé." },
+  { id: 'hayati_black', name: "Parfum Hayati Noir", cat: "hommes", price: 18000, img:"hayyati_noir.jpg", desc: "Ambre et vanille sur fond d'oud." },
+  { id: 'ideal', name: "Parfum Ideal", cat: "hommes", price: 15000, img: "ideal.jpg", desc: "Amande, fève tonka, cuir noble." },
+  { id: 'lattafa_w', name: "Parfum Lattafa Blanc", cat: "femmes", price: 15000, img: "lattafa_blanc.jpg", desc: "Bouquet floral poudré." },
+  { id: 'musc_blanc', name: "Musk Coton Blanc", cat: "femmes", price: 15000, img: "musc_blanc.jpeg", desc: "Musc pur et coton délicat." },
+  { id: 'pink_rose', name: "Pink Rose", cat: "femmes", price: 13000, img: "musuf_rose.jpeg", desc: "Rose fraîche & fruits rouges." },
+  { id: 'hayati_w', name: "Hayati Blanc", cat: "femmes", price: 18000, img: "hayaati_blanc.jpg", desc: "Jasmin, vanille et santal." },
+  { id: 'moha', name: "Parfum Moha", cat: "femmes", price: 15000, img: "IMG-20250803-WA0156.jpg", desc: "Agrumes et brise marine." },
+  { id: 'mousuf_marron', name: "Mousuf Marron", cat: "mixtes", price: 12000, img: "musuf_marron.jpg", desc: "Notes boisées et orientales." }
+];
+
+let products = [...initialProducts];
+let cart = [];
+
+// === AFFICHAGE DES PRODUITS ===
+const productsGrid = document.getElementById("productsGrid");
+function displayProducts(prods){
+  if(!productsGrid) return;
+  productsGrid.innerHTML = "";
+  prods.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="media"><img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'"><span class="badge">${p.cat}</span></div>
+      <div class="body">
+        <h3>${p.name}</h3>
+        <div class="desc">${p.desc}</div>
+        <div class="row">
+          <div class="price">${p.price.toLocaleString()} FCFA</div>
+          <button class="add-btn">Ajouter</button>
+        </div>
+      </div>
+    `;
+    card.querySelector(".add-btn").addEventListener("click",()=>addToCart(p));
+    productsGrid.appendChild(card);
+  });
+}
+displayProducts(products);
+
+// === PANIER ===
+let cartPreview = document.getElementById("cartPreview");
+let btnToggleCart = document.getElementById("btnToggleCart");
+
+function addToCart(p){
+  const existing = cart.find(i=>i.id===p.id);
+  existing ? existing.qty++ : cart.push({...p, qty:1});
+  updateCartUI();
+}
+
+function updateCartUI(){
+  const cartCount = document.getElementById("cartCount");
+  const cartItems = document.getElementById("cartItems");
+  const cartTotal = document.getElementById("cartTotal");
+  if(cartCount) cartCount.innerText = `${cart.reduce((a,c)=>a+c.qty,0)} 🛒`;
+  if(!cartItems || !cartTotal) return;
+  cartItems.innerHTML = "";
+  let total=0;
+
+  if(cart.length===0){
+    cartItems.innerHTML = "<li style='color:var(--muted)'>Votre panier est vide.</li>";
+  } else {
+    cart.forEach(i=>{
+      total+=i.price*i.qty;
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;flex:1">
+          <img src="${i.img}" alt="${i.name}" width="48" height="48" style="border-radius:8px">
+          <div>
+            <div style="font-weight:700">${i.name}</div>
+            <div style="font-size:12px;color:var(--muted)">${i.price.toLocaleString()} FCFA</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn-ghost" onclick="changeQty('${i.id}',-1)">−</button>
+          <span>${i.qty}</span>
+          <button class="btn-ghost" onclick="changeQty('${i.id}',1)">+</button>
+          <button class="btn-ghost" onclick="removeItem('${i.id}')">🗑️</button>
+        </div>`;
+      cartItems.appendChild(li);
+    });
+  }
+  cartTotal.innerText = `${total.toLocaleString()} FCFA`;
+}
+
+function changeQty(id,delta){
+  const item=cart.find(i=>i.id===id);
+  if(!item)return;
+  item.qty+=delta;
+  if(item.qty<=0)cart=cart.filter(i=>i.id!==id);
+  updateCartUI();
+}
+
+function removeItem(id){
+  cart=cart.filter(i=>i.id!==id);
+  updateCartUI();
+}
+
+document.getElementById("clearCartBtn") && (document.getElementById("clearCartBtn").onclick = () => { if(cart.length&&confirm("Vider le panier ?")) cart=[]; updateCartUI(); });
+btnToggleCart && (btnToggleCart.onclick = () => cartPreview && (cartPreview.style.display = (cartPreview.style.display==="block"?"none":"block")));
+document.getElementById("closeCartPreview") && (document.getElementById("closeCartPreview").onclick = () => cartPreview && (cartPreview.style.display="none"));
+document.getElementById("payBtn") && (document.getElementById("payBtn").onclick = () => {
+  if(cart.length===0) return alert("Votre panier est vide.");
+  const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+  alert(`Total : ${total.toLocaleString()} FCFA\nMerci de régler via Orange Money ou Wave sur le numéro 77 732 94 16.`);
+});
+
+// === FILTRES & TRI ===
+const searchInput = document.getElementById("searchInput");
+if (searchInput) searchInput.addEventListener("input", e => {
+  const t = e.target.value.toLowerCase();
+  displayProducts(products.filter(p => p.name.toLowerCase().includes(t)));
+});
+
+document.querySelectorAll(".cats button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".cats button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const cat = btn.dataset.cat;
+    displayProducts(cat==="all"?products:products.filter(p=>p.cat===cat));
+  });
+});
+
+const sortSelect = document.getElementById("sortSelect");
+if (sortSelect) sortSelect.addEventListener("change", e => {
+  const val = e.target.value;
+  let sorted = [...products];
+  if(val==="price-asc") sorted.sort((a,b)=>a.price-b.price);
+  if(val==="price-desc") sorted.sort((a,b)=>b.price-a.price);
+  if(val==="name-asc") sorted.sort((a,b)=>a.name.localeCompare(b.name));
+  displayProducts(sorted);
+});
+
+// === AJOUT PRODUIT (submit) ===
+if (form) form.addEventListener("submit", e => {
+  e.preventDefault();
+  const imgFile = document.getElementById("pfile") && document.getElementById("pfile").files[0];
+  const imgSrc = imgFile ? URL.createObjectURL(imgFile) : "placeholder.jpg";
+  const newP = {
+    id: 'p_' + Date.now(),
+    name: document.getElementById("pname").value,
+    cat: document.getElementById("pcat").value,
+    desc: document.getElementById("pdesc").value,
+    price: parseInt(document.getElementById("pprice").value) || 0,
+    img: imgSrc
+  };
+  products.push(newP);
+  displayProducts(products);
+  form.reset();
+  modal && (modal.style.display = "none");
+});
+</script>
+</body>
+</html>
